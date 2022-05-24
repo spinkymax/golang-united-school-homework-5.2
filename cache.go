@@ -30,15 +30,13 @@ func (from Cache) Keys() []string {
 
 }
 func (from Cache) Get(key string) (string, bool) {
-	 if k, ok := from.grades[key]; ok {
-        return k.value, true
-
-    } else {
-
-        return "", false
-    }
+	if k, ok := from.grades[key]; ok {
+		if k.deadline.IsZero() || time.Now().Before(k.deadline) {
+			return k.value, true
+		}
+	}
+	return "", false
 }
-
 func (from Cache) PutTill(key, value string, deadline time.Time) {
   from.grades[key] = Account{value: value,deadline: deadline }
 }
